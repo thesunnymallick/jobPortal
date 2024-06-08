@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import colors from "colors"
 import connectDB from "./config/dbConfig.js";
 import authRoute from "./routes/authRoute.js"
+import errorMiddleware from "./middleware/errorMiddleware.js";
 
 // env file config
 dotenv.config();
@@ -19,9 +20,10 @@ const app=express()
 app.use(express.json())
 app.use("/api/v1/user", authRoute);
 
+app.use(errorMiddleware)
+
 
 // Server Start
-
 app.listen(PORT, (req, res)=>{
     console.log(`Server starting in ${process.env.MODE} mode on port on ${PORT}`.blue)
 })

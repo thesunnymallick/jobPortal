@@ -4,21 +4,23 @@ const userSchema= new mongoose.Schema(
     {
         name: {
             type:String,
-            require: [true , "Name is required"],
+            required: [true , "Name is required"],
+        
         },
         phoneNo:{
             type:Number,
         },
         email:{
             type:String,
-            require:[true, "Email is required"],
+            required:[true, "Email is required"],
             unique:true,
             validate: validator.isEmail,
             
         },
         password:{
             type: String,
-            require: [true, "password is required"],
+            required: [true, "password is required"],
+            
 
         },
         location :{

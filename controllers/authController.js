@@ -1,38 +1,24 @@
 import UserModel from "../models/userModel.js";
+import ErrorHandeller from "../utils/ErrorHandeller.js";
 
 
-export const userRegister=async(req, res)=>{
+export const userRegister=async(req, res, next)=>{
   try {
     const {name, email, password}=req.body;
     if(!name){
-        return res.status(400).json({
-        message:"name is requied",
-        statusCode:400,
-        success:false,
-        })
+        
+          return next(new ErrorHandeller("Name is required", 400))
     }
     if(!email){
-        return res.status(400).json({
-        message:"email is requied",
-        statusCode:400,
-        success:false,
-        })
+        return next(new ErrorHandeller("email is required", 400))
     }
     if(!password){
-        return res.status(400).json({
-        message:"password is requied",
-        statusCode:400,
-        success:false,
-        })
+        return next(new ErrorHandeller("password is required", 400))
     }
 
     const existingUser= await UserModel.findOne({email});
     if(existingUser){
-        return res.status(400).json({
-            message:"user was allready register, please login!",
-            statusCode:400,
-            success:false,
-        })
+        return next(new ErrorHandeller("user was allready register, please login!", 400))
     }
     const user=await UserModel.create({name, email, password})
      return res.status(201).json({
@@ -42,11 +28,6 @@ export const userRegister=async(req, res)=>{
         user
      })
   } catch (error) {
-    res.status(400).json({
-        message:"failed! user register unsuccessfull",
-        statusCode:400,
-        success:false,
-        error
-    })
+      return next(error)
   }
 }
