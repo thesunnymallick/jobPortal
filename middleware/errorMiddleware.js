@@ -5,7 +5,6 @@ const errorMiddleware=(err, req, res, next)=>{
   err.statusCode=err.statusCode || 500;
 
 
-
   if (err.name === "NotFoundError") {
     err.message = "Not Found";
     err.statusCode = 404;
@@ -30,8 +29,6 @@ const errorMiddleware=(err, req, res, next)=>{
     err.message = "Forbidden";
     err.statusCode = 403;
   }
-
-  
 
   if (err.statusCode === 405) {
     err.message = "Method Not Allowed";

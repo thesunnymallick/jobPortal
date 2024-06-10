@@ -1,8 +1,8 @@
-import UserModel from "../models/userModel.js";
+import User from "../models/userModel.js";
 import ErrorHandeller from "../utils/ErrorHandeller.js";
 
 
-export const userRegister=async(req, res, next)=>{
+export const registerController=async(req, res, next)=>{
   try {
     const {name, email, password}=req.body;
     if(!name){
@@ -15,19 +15,80 @@ export const userRegister=async(req, res, next)=>{
     if(!password){
         return next(new ErrorHandeller("password is required", 400))
     }
-
-    const existingUser= await UserModel.findOne({email});
+  
+    const existingUser= await User.findOne({email});
     if(existingUser){
         return next(new ErrorHandeller("user was allready register, please login!", 400))
     }
-    const user=await UserModel.create({name, email, password})
+    const user=await User.create({name, email, password})
+      // Genrate Token 
+     const token=user.createJWT()
      return res.status(201).json({
         message:"User register successfull",
         statusCode:200,
         success:false,
-        user
+        data:{
+            name:user.name,
+            email:user.email,
+        },
+        token
      })
   } catch (error) {
       return next(error)
   }
+}
+
+
+export const loginController=async(req, res, next)=>{
+    try {
+        const {email, password}=req.body
+        if(!email  && !password){
+            return next(new ErrorHandeller("email and password required!", 400))
+        }
+        // find by email
+        const user= await User.findOne({email})
+        if(!user){
+            return next(new ErrorHandeller("Invalid email and password", 400));
+        }
+        // check password match or not
+        const isMatch= await user.comparePassword(password);
+
+        console.log(isMatch)
+        if(!isMatch){
+            return  next (new ErrorHandeller("Invalid email and password", 400))
+        }
+
+        // Genrate Token
+        const token=user.createJWT();
+        res.status(200).json({
+            message:"User login successfully",
+            success:true,
+            statusCode:200,
+            data:{
+                name:user.name,
+                email:user.email
+            }, 
+            token
+        })
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const userDetailsController=async(req, res, next)=>{
+    try {
+        const {name}=req.params
+        const userDeatils =await User.findOne({name});
+        if(!userDeatils){
+            return next(new ErrorHandeller("Not found user details", 400))
+        }
+        return res.status(201).json({
+            message:"User details fetch successfull",
+            statusCode:200,
+            success:false,
+            data:userDeatils,
+         })
+    } catch (error) {
+        next(error)
+    }
 }
