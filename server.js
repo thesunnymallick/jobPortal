@@ -4,7 +4,8 @@ import colors from "colors"
 import connectDB from "./config/dbConfig.js";
 import authRoute from "./routes/authRoute.js"
 import errorMiddleware from "./middleware/errorMiddleware.js";
-
+import userRoute from "./routes/userRoute.js"
+import jobRoute from "./routes/jobRoute.js"
 // env file config
 dotenv.config();
 
@@ -18,7 +19,9 @@ const app=express()
 
 // middleware 
 app.use(express.json())
-app.use("/api/v1/user", authRoute);
+app.use("/api/v1/auth", authRoute);
+app.use("/api/v1/user", userRoute);
+app.use("/api/v1/job", jobRoute);
 
 app.use(errorMiddleware)
 

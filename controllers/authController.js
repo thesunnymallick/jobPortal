@@ -20,7 +20,7 @@ export const registerController=async(req, res, next)=>{
     if(existingUser){
         return next(new ErrorHandeller("user was allready register, please login!", 400))
     }
-    const user=await User.create({name, email, password})
+    const user=await User.create({name, email, password, location:null, phoneNo:null})
       // Genrate Token 
      const token=user.createJWT()
      return res.status(201).json({
@@ -75,20 +75,3 @@ export const loginController=async(req, res, next)=>{
     }
 }
 
-export const userDetailsController=async(req, res, next)=>{
-    try {
-        const {name}=req.params
-        const userDeatils =await User.findOne({name});
-        if(!userDeatils){
-            return next(new ErrorHandeller("Not found user details", 400))
-        }
-        return res.status(201).json({
-            message:"User details fetch successfull",
-            statusCode:200,
-            success:false,
-            data:userDeatils,
-         })
-    } catch (error) {
-        next(error)
-    }
-}

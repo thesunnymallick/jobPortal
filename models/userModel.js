@@ -55,4 +55,4 @@ const token= JWT.sign({user_id:this._id}, process.env.JWT_SECRET, {expiresIn:"1d
 return token;
 } 
 const User= mongoose.model("Users", userSchema)
-export default User
+export default User;
